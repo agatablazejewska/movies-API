@@ -1,0 +1,19 @@
+{
+  "name": "movies_api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agatablazejewska/movies_API.git"
+  },
+  "author": "Agata Sokołowska",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/agatablazejewska/movies_API/issues"
+  },
+  "homepage": "https://github.com/agatablazejewska/movies_API#readme"
+}
