@@ -1,11 +1,11 @@
 import { ValidateNested } from 'class-validator';
 import MovieDto from './movie.dto';
 
-interface GetMoviesDto {
+export interface IGetMoviesDto {
     movies: MovieDto[];
 }
 
-class GetMoviesDto {
+export default class GetMoviesDto implements IGetMoviesDto {
     @ValidateNested({
         each: true,
     })

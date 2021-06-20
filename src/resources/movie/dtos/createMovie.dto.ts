@@ -7,7 +7,7 @@ import {
     MinLength,
 } from 'class-validator';
 
-interface ICreateMovieDto {
+export interface ICreateMovieDto {
     title: string;
     year: number;
     runtime: number;

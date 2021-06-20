@@ -7,7 +7,7 @@ import {
     MinLength,
 } from 'class-validator';
 
-interface IMovieDto {
+export interface IMovieDto {
     readonly id: number;
     title: string;
     year: number;
