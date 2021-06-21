@@ -6,17 +6,9 @@ import {
     MaxLength,
     MinLength,
 } from 'class-validator';
+import { IMovie } from '../movie.model';
 
-export interface ICreateMovieDto {
-    title: string;
-    year: number;
-    runtime: number;
-    director: string;
-    genres: GENRES[];
-    actors?: string;
-    plot?: string;
-    posterUrl?: string;
-}
+export interface ICreateMovieDto extends IMovie {}
 
 export default class CreateMovieDto implements ICreateMovieDto {
     @IsString({

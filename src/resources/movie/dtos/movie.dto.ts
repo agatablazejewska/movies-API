@@ -6,18 +6,9 @@ import {
     MaxLength,
     MinLength,
 } from 'class-validator';
+import { IMovie, IMovieWithId } from '../movie.model';
 
-export interface IMovieDto {
-    readonly id: number;
-    title: string;
-    year: number;
-    runtime: number;
-    director: string;
-    genres: GENRES[];
-    actors?: string;
-    plot?: string;
-    posterUrl?: string;
-}
+export interface IMovieDto extends IMovieWithId {}
 
 export default class MovieDto implements IMovieDto {
     @IsInt({

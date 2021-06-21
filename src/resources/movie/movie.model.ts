@@ -6,9 +6,10 @@ import {
     MaxLength,
     MinLength,
 } from 'class-validator';
+import IHasId from '../../utils/IHasId';
+import { IMovieDto } from './dtos/movie.dto';
 
 export interface IMovie {
-    readonly id: number;
     title: string;
     year: number;
     runtime: number;
@@ -19,7 +20,9 @@ export interface IMovie {
     posterUrl?: string;
 }
 
-export default class MovieModel implements IMovie {
+export interface IMovieWithId extends IMovie, IHasId {}
+
+export default class MovieModel implements IMovieWithId {
     @IsInt({
         message: 'Id should be an integer',
     })
@@ -95,4 +98,16 @@ export default class MovieModel implements IMovie {
         message: `Poster's url has an invalid format`,
     })
     posterUrl?: string;
+
+    constructor(movie: IMovieWithId) {
+        this.id = movie.id;
+        this.title = movie.title;
+        this.year = movie.year;
+        this.runtime = movie.runtime;
+        this.director = movie.director;
+        this.genres = movie.genres;
+        this.actors = movie.actors;
+        this.plot = movie.plot;
+        this.posterUrl = movie.posterUrl;
+    }
 }
