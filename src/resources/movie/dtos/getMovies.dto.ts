@@ -10,4 +10,8 @@ export default class GetMoviesDto implements IGetMoviesDto {
         each: true,
     })
     movies: MovieDto[];
+
+    constructor(movies: MovieDto[]) {
+        this.movies = movies;
+    }
 }
