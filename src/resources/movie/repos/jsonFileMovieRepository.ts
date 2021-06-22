@@ -3,7 +3,7 @@ import IDbSchema from '../../../database/IDbSchema';
 import { IGetMoviesDto } from '../dtos/getMovies.dto';
 import { IMovieDto } from '../dtos/movie.dto';
 import MovieMapper from '../mappers/movie.mapper';
-import { IMovie, IMovieWithId } from '../movie.model';
+import { IMovieWithId } from '../movie.model';
 import IMovieRepository from './IMovieRepository';
 import { DB_FILE } from '../../../config';
 
@@ -31,6 +31,7 @@ export default class JsonFileMovieRepository implements IMovieRepository {
 
     async getMoviesByGenres(genres: GENRES[]): Promise<IGetMoviesDto> {
         const filtered = await this._filterAllMoviesByGenres(genres);
+        filtered.sort(this._compareByMatchingGenresNumber(genres));
 
         return MovieMapper.toGetMoviesDto(filtered);
     }
@@ -50,6 +51,8 @@ export default class JsonFileMovieRepository implements IMovieRepository {
             filteredByGenresAndDuration
         );
 
+        unique.sort(this._compareByMatchingGenresNumber(genres));
+
         return MovieMapper.toGetMoviesDto(unique);
     }
 
@@ -59,14 +62,19 @@ export default class JsonFileMovieRepository implements IMovieRepository {
         Usage of public methods for this purpose was possible, but it would generate unnecessary mapping.
         With lots of results(movies) it might have an impact on efficiency of the app.
     */
-    private async _filterAllMoviesByDuration(from: number, to: number) {
+    private async _filterAllMoviesByDuration(
+        from: number,
+        to: number
+    ): Promise<IMovieWithId[]> {
         const movies = await this._getAllMoviesFromDB();
 
         const filtered = this._findBetweenDuration(movies, from, to);
         return filtered;
     }
 
-    private async _filterAllMoviesByGenres(genres: GENRES[]) {
+    private async _filterAllMoviesByGenres(
+        genres: GENRES[]
+    ): Promise<IMovieWithId[]> {
         const movies = await this._getAllMoviesFromDB();
 
         const filtered = movies.filter((movie) =>
@@ -105,5 +113,38 @@ export default class JsonFileMovieRepository implements IMovieRepository {
             ).values(),
         ];
         return unique;
+    }
+
+    private _compareByMatchingGenresNumber(genres: GENRES[]) {
+        return (movieA: IMovieWithId, movieB: IMovieWithId) => {
+            const movieAIntersectingGenresNumber =
+                this._findMovieGenresAndSpecifiedGenresIntersectionNumber(
+                    movieA,
+                    genres
+                );
+            const movieBIntersectingGenresNumber =
+                this._findMovieGenresAndSpecifiedGenresIntersectionNumber(
+                    movieB,
+                    genres
+                );
+
+            if (movieAIntersectingGenresNumber < movieBIntersectingGenresNumber) {
+                return -1;
+            }
+            if (movieAIntersectingGenresNumber > movieBIntersectingGenresNumber) {
+                return 1;
+            }
+
+            return 0;
+        };
+    }
+
+    private _findMovieGenresAndSpecifiedGenresIntersectionNumber(
+        movie: IMovieWithId,
+        genres: GENRES[]
+    ): number {
+        const intersection = movie.genres.filter((genre) => genres.includes(genre));
+
+        return intersection.length;
     }
 }
