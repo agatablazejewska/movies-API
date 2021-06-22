@@ -45,15 +45,18 @@ export default class JsonFileMovieRepository implements IMovieRepository {
             duration.from,
             duration.to
         );
-        const filteredByGenresAndDuration =
-            filteredByGenres.concat(filteredByDuration);
-        const unique = this._removeDuplicatesFromArrayById(
-            filteredByGenresAndDuration
-        );
+        const allFiltered = filteredByGenres.concat(filteredByDuration);
 
+        const uniqueSorted = this._removeDuplicatesAndSortByGenresMatch(allFiltered, genres);
+
+        return MovieMapper.toGetMoviesDto(uniqueSorted);
+    }
+
+    private _removeDuplicatesAndSortByGenresMatch(allFiltered: IMovieWithId[], genres: GENRES[]) {
+        const unique = this._removeDuplicatesFromArrayById(allFiltered);
         unique.sort(this._compareByMatchingGenresNumber(genres));
 
-        return MovieMapper.toGetMoviesDto(unique);
+        return unique;
     }
 
     /*
@@ -95,7 +98,7 @@ export default class JsonFileMovieRepository implements IMovieRepository {
         to: number
     ): IMovieWithId[] {
         const filtered = movies.filter(
-            (movie) => movie.runtime >= from && movie.runtime <= to
+            movie => movie.runtime >= from && movie.runtime <= to
         );
         return filtered;
     }
@@ -118,28 +121,35 @@ export default class JsonFileMovieRepository implements IMovieRepository {
     private _compareByMatchingGenresNumber(genres: GENRES[]) {
         return (movieA: IMovieWithId, movieB: IMovieWithId) => {
             const movieAIntersectingGenresNumber =
-                this._findMovieGenresAndSpecifiedGenresIntersectionNumber(
+                this._findMovieGenresAndSpecifiedGenresIntersectionsAmount(
                     movieA,
                     genres
                 );
             const movieBIntersectingGenresNumber =
-                this._findMovieGenresAndSpecifiedGenresIntersectionNumber(
+                this._findMovieGenresAndSpecifiedGenresIntersectionsAmount(
                     movieB,
                     genres
                 );
 
-            if (movieAIntersectingGenresNumber < movieBIntersectingGenresNumber) {
-                return -1;
-            }
-            if (movieAIntersectingGenresNumber > movieBIntersectingGenresNumber) {
-                return 1;
-            }
-
-            return 0;
+            return this._compareIntersectionsAmount(movieAIntersectingGenresNumber, movieBIntersectingGenresNumber);
         };
     }
 
-    private _findMovieGenresAndSpecifiedGenresIntersectionNumber(
+    private _compareIntersectionsAmount(
+        movieAIntersectingGenresNumber: number,
+        movieBIntersectingGenresNumber: number)
+    : number {
+        if (movieAIntersectingGenresNumber < movieBIntersectingGenresNumber) {
+            return -1;
+        }
+        if (movieAIntersectingGenresNumber > movieBIntersectingGenresNumber) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    private _findMovieGenresAndSpecifiedGenresIntersectionsAmount(
         movie: IMovieWithId,
         genres: GENRES[]
     ): number {
