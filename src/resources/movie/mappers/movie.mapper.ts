@@ -13,7 +13,7 @@ export default class MovieMapper {
     }
 
     public static toGetMoviesDto(model: IMovieWithId[]): IGetMoviesDto {
-        const MovieDtoArray = model.map(m => this.toMovieDto(m));
+        const MovieDtoArray = model.map((m) => this.toMovieDto(m));
 
         return new GetMoviesDto(MovieDtoArray);
     }
@@ -22,7 +22,10 @@ export default class MovieMapper {
         return new MovieModel(movieDto);
     }
 
-    public static toMovieModelFromCreateMovieDto(createMovieDto: ICreateMovieDto, newId: number): IMovieWithId {
-        return new MovieModel({id: newId, ...createMovieDto})
+    public static toMovieModelFromCreateMovieDto(
+        createMovieDto: ICreateMovieDto,
+        newId: number
+    ): IMovieWithId {
+        return new MovieModel({ id: newId, ...createMovieDto });
     }
 }
