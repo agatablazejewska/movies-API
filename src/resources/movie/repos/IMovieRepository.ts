@@ -1,8 +1,11 @@
 import { IGetMoviesDto } from '../dtos/getMovies.dto';
 import { IMovieDto } from '../dtos/movie.dto';
-import { IMovie } from '../movie.model';
+import { IMovie, IMovieWithId } from '../movie.model';
 
 export default interface IMovieRepository {
-    create(movie: IMovie): Promise<IMovieDto>;
-    getMovies(genres?: GENRES[], duration?: number): Promise<IGetMoviesDto>;
+    create(movie: IMovieWithId): Promise<IMovieDto>;
+    getMoviesByDuration(from: number, to: number): Promise<IGetMoviesDto>;
+    getMoviesByGenres(genres: GENRES[]): Promise<IGetMoviesDto>;
+    getMoviesByGenresAndDuration(genres: GENRES[], duration: {from: number, to: number}): Promise<IGetMoviesDto>;
+    getAllMovies(): Promise<IGetMoviesDto>;
 }
