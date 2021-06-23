@@ -29,7 +29,7 @@ export default class MovieController {
     }
 
     async getByGenres(req, res) {
-        const genres = this._convertParamsToArr(req);
+        const genres = this._convertGenresParamToArr(req);
 
         const getMoviesDto = await this._movieService.getByGenres(genres);
 
@@ -37,7 +37,7 @@ export default class MovieController {
     }
 
     async getByGenresAndDuration(req, res) {
-        const genres = this._convertParamsToArr(req);
+        const genres = this._convertGenresParamToArr(req);
         const duration = this._getDurationParams(req);
 
         const getMoviesDto = await this._movieService.getByGenresAndDuration(genres, duration);
@@ -52,7 +52,7 @@ export default class MovieController {
         return { from, to };
     }
 
-    private _convertParamsToArr(req) {
+    private _convertGenresParamToArr(req) {
         const genres = req.params.genres.split(',');
         return genres;
     }
