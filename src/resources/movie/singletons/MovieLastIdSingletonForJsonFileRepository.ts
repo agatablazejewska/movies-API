@@ -23,5 +23,6 @@ class MovieLastIdSingletonForJsonFileRepository extends MovieLastIdSingleton {
     }
 }
 
-const LastMovieIdSingleton = new MovieLastIdSingletonForJsonFileRepository(new JsonFileMovieRepository());
-export default LastMovieIdSingleton;
+const lastMovieIdSingleton = new MovieLastIdSingletonForJsonFileRepository(new JsonFileMovieRepository());
+lastMovieIdSingleton.initializeLastId();
+export default lastMovieIdSingleton;
