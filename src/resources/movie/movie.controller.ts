@@ -1,5 +1,4 @@
 import { IGetMoviesDto } from './dtos/getMovies.dto';
-import { IMovieDto } from './dtos/movie.dto';
 import MovieMapper from './mappers/movie.mapper';
 import MovieService from './services/movieService';
 
@@ -10,41 +9,40 @@ export default class MovieController {
         this._movieService = movieService;
     }
 
-    async createMovie(req, res): Promise<IMovieDto> {
-        const createMovieDto = MovieMapper.toCreateMovieDto(req.body);
-        const createdMovie = await this._movieService.create(createMovieDto);
+    async createMovie(req, res) {
+        const createdMovie = await this._movieService.create(req.body);
 
-        return createdMovie;
+        res.json(createdMovie);
     }
 
-    async getRandom(req, res): Promise<IGetMoviesDto> {
+    async getRandom(req, res) {
         const getMoviesDto = await this._movieService.getRandom();
 
-        return getMoviesDto;
+        res.json(getMoviesDto);
     }
 
-    async getByDuration(req, res): Promise<IGetMoviesDto> {
+    async getByDuration(req, res) {
         const { from, to } = this._getDurationParams(req);
         const getMoviesDto = await this._movieService.getByDuration(from, to);
 
-        return getMoviesDto;
+        res.json(getMoviesDto);
     }
 
-    async getByGenres(req, res): Promise<IGetMoviesDto> {
+    async getByGenres(req, res) {
         const genres = this._convertParamsToArr(req);
 
         const getMoviesDto = await this._movieService.getByGenres(genres);
 
-        return getMoviesDto;
+        res.json(getMoviesDto);
     }
 
-    async getByGenresAndDuration(req, res): Promise<IGetMoviesDto> {
+    async getByGenresAndDuration(req, res) {
         const genres = this._convertParamsToArr(req);
         const duration = this._getDurationParams(req);
 
         const getMoviesDto = await this._movieService.getByGenresAndDuration(genres, duration);
 
-        return getMoviesDto;
+        res.json(getMoviesDto);
     }
 
     private _getDurationParams(req): { from: number; to: number } {
