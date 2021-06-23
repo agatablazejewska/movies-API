@@ -1,12 +1,13 @@
-import { plainToClass, plainToClassFromExist, serialize } from 'class-transformer';
 import { NextFunction, Request, Response } from 'express';
 import { validate, validateOrReject } from 'class-validator';
-import CreateMovieDto from '../dtos/createMovie.dto';
-import MovieDto from '../dtos/movie.dto';
-import MovieMapper from '../mappers/movie.mapper';
+import { convertToMeaningfulErrorsArray } from '../../../utils/errorHelper';
+import { IMovieDto, IMovieDtoWithId } from '../dtos/IMovieDto';
+import { IMovie, IMovieWithId } from '../movie.model';
 
-export  default class MovieValidator {
-    static async validateCreateMovie(req: Request, res: Response, next: NextFunction) {
+type movieInterfaces = IMovieDto | IMovieDtoWithId | IMovie | IMovieWithId;
+
+export default class MovieValidator<T extends  movieInterfaces> {
+    async validateMovie(req: Request, res: Response, next: NextFunction) {
         const validationOptions = {
             whitelist: true,
             forbidNonWhitelisted: true,
@@ -16,12 +17,15 @@ export  default class MovieValidator {
         }
 
         try {
-            const createMovieDto: CreateMovieDto = req.body.dto;
-            await validateOrReject(createMovieDto, validationOptions);
+            const obj: T = req.body.dto;
+            await validateOrReject(obj, validationOptions);
             next();
         } catch (errors) {
-            console.log(errors);
-           res.status(400).send(errors);
+           const meaningfulErrors = convertToMeaningfulErrorsArray(errors);
+
+           res.status(400).json(meaningfulErrors);
         }
     }
+
+
 }
