@@ -140,10 +140,10 @@ export default class JsonFileMovieRepository implements IMovieRepository {
         movieAIntersectingGenresNumber: number,
         movieBIntersectingGenresNumber: number)
     : number {
-        if (movieAIntersectingGenresNumber < movieBIntersectingGenresNumber) {
+        if (movieAIntersectingGenresNumber > movieBIntersectingGenresNumber) {
             return -1;
         }
-        if (movieAIntersectingGenresNumber > movieBIntersectingGenresNumber) {
+        if (movieAIntersectingGenresNumber < movieBIntersectingGenresNumber) {
             return 1;
         }
 
