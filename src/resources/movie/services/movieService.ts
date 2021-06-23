@@ -1,3 +1,4 @@
+import { GENRES } from '../../../shared/enums/genres';
 import { ICreateMovieDto } from '../dtos/createMovie.dto';
 import GetMoviesDto, { IGetMoviesDto } from '../dtos/getMovies.dto';
 import MovieDto from '../dtos/movie.dto';
