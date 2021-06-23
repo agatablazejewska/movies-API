@@ -1,13 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
 import { validate, validateOrReject } from 'class-validator';
 import { convertToMeaningfulErrorsArray } from '../../../utils/errorHelper';
+import { IGetMoviesDto } from '../dtos/getMovies.dto';
 import { IMovieDto, IMovieDtoWithId } from '../dtos/IMovieDto';
 import { IMovie, IMovieWithId } from '../movie.model';
 
-type movieInterfaces = IMovieDto | IMovieDtoWithId | IMovie | IMovieWithId;
+type movieInterfaces = IMovieDto | IMovieDtoWithId | IMovie | IMovieWithId | IGetMoviesDto;
 
 export default class MovieValidator<T extends  movieInterfaces> {
-    async validateMovie(req: Request, res: Response, next: NextFunction) {
+    async validate(movie: T) {
         const validationOptions = {
             whitelist: true,
             forbidNonWhitelisted: true,
@@ -17,13 +18,11 @@ export default class MovieValidator<T extends  movieInterfaces> {
         }
 
         try {
-            const obj: T = req.body.dto;
-            await validateOrReject(obj, validationOptions);
-            next();
+            await validateOrReject(movie, validationOptions);
         } catch (errors) {
            const meaningfulErrors = convertToMeaningfulErrorsArray(errors);
 
-           res.status(400).json(meaningfulErrors);
+           throw meaningfulErrors;
         }
     }
 
