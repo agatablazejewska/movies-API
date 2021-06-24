@@ -10,13 +10,13 @@ app.set('json spaces', 2);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use('/api/movie', movieRouter);
-
-app.use('/', (req, res) => {
-    res.status(200).send('Welcome to Movies API');
+app.all('/', (req, res) => {
+    res.status(200).json('Welcome to Movies API');
 });
 
-app.use((req, res) => {
+app.use('/api/movie', movieRouter);
+
+app.all('*', (req, res) => {
     res.status(404).json({ error: '404 Page not found' });
 });
 
