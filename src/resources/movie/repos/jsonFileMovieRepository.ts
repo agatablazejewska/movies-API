@@ -90,6 +90,10 @@ export default class JsonFileMovieRepository implements IMovieRepository {
     private async _getAllMoviesFromDB(): Promise<IMovieWithId[]> {
         const db: IDbSchema = await readJson(DB_FILE);
         const movies = db.movies;
+
+        if(!movies || !movies.length) {
+            throw new Error('There are no movies in the database');
+        }
         return movies;
     }
 
