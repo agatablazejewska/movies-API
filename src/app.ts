@@ -16,4 +16,13 @@ app.use('/', (req, res) => {
     res.status(200).send('Welcome to Movies API');
 });
 
+app.use((req, res) => {
+    res.status(404).json({ error: '404 Page not found' });
+});
+
+app.use((error, req, res, next) => {
+    const statusCode = error.code ? error.code : 500;
+    res.status(statusCode).json({ error: error.message });
+});
+
 export default app;
