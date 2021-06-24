@@ -25,6 +25,9 @@ export const createMovieValidate = async (req: Request, res: Response, next: Nex
 export const durationValidate = (req: Request, res: Response, next: NextFunction) => {
     const { from, to } = getDurationParams(req);
 
+    validateIndividualDurationNumber(from, res, next);
+    validateIndividualDurationNumber(to, res, next);
+
     if(from < to) {
         const error = new BadRequestError(
             400,
@@ -33,9 +36,6 @@ export const durationValidate = (req: Request, res: Response, next: NextFunction
 
         next(error);
     }
-
-    validateIndividualDurationNumber(from, res, next);
-    validateIndividualDurationNumber(to, res, next);
 
     next();
 }
