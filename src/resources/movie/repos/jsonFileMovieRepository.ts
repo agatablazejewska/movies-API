@@ -1,14 +1,15 @@
 import { readJson, writeJson } from 'fs-extra';
 import IDbSchema from '../../../database/IDbSchema';
+import { GENRES } from '../../../shared/enums/genres';
 import { IGetMoviesDto } from '../dtos/getMovies.dto';
-import { IMovieDto } from '../dtos/movie.dto';
+import { IMovieDto, IMovieDtoWithId } from '../dtos/IMovieDto';
 import MovieMapper from '../mappers/movie.mapper';
 import { IMovieWithId } from '../movie.model';
 import IMovieRepository from './IMovieRepository';
 import { DB_FILE } from '../../../config';
 
 export default class JsonFileMovieRepository implements IMovieRepository {
-    async create(movie: IMovieWithId): Promise<IMovieDto> {
+    async create(movie: IMovieWithId): Promise<IMovieDtoWithId> {
         const db: IDbSchema = await readJson(DB_FILE);
         db.movies.push(movie);
 
@@ -98,7 +99,7 @@ export default class JsonFileMovieRepository implements IMovieRepository {
         to: number
     ): IMovieWithId[] {
         const filtered = movies.filter(
-            movie => movie.runtime >= from && movie.runtime <= to
+            movie => parseInt(movie.runtime) >= from && parseInt(movie.runtime) <= to
         );
         return filtered;
     }
@@ -139,10 +140,10 @@ export default class JsonFileMovieRepository implements IMovieRepository {
         movieAIntersectingGenresNumber: number,
         movieBIntersectingGenresNumber: number)
     : number {
-        if (movieAIntersectingGenresNumber < movieBIntersectingGenresNumber) {
+        if (movieAIntersectingGenresNumber > movieBIntersectingGenresNumber) {
             return -1;
         }
-        if (movieAIntersectingGenresNumber > movieBIntersectingGenresNumber) {
+        if (movieAIntersectingGenresNumber < movieBIntersectingGenresNumber) {
             return 1;
         }
 
