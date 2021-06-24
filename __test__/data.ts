@@ -1,7 +1,7 @@
 import MovieModel from '../src/resources/movie/movie.model';
 import { GENRES } from '../src/shared/enums/genres';
 
-const genres = [
+export const genres = [
     "Comedy",
     "Fantasy",
     "Crime",
@@ -25,7 +25,7 @@ const genres = [
     "Sport"
 ];
 
-const movies: MovieModel[] = [
+export const movies: MovieModel[] = [
     {
         id: 1,
         title: "The Shawshank Redemption",
