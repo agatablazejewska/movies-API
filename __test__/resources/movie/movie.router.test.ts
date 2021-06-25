@@ -175,16 +175,17 @@ describe('Tests for the GET /api/movie endpoints', () => {
                 const res = await request.get(`${generalRoute}${genresParam}`);
                 const movies: MovieDto[] = res.body.movies;
 
-
                 expect(movies).toHaveLength(5);
-                movies.forEach(m => expect(correctMoviesIds.includes(m.id)).toBe(true));
-            })
+                movies.forEach((m) =>
+                    expect(correctMoviesIds.includes(m.id)).toBe(true)
+                );
+            });
 
             test(`Genres were provided with a valid format and their value can be found in GENRES enum.
             Should return movies sorted by the highest match amount.`, async () => {
                 const genresParam = 'Crime,Drama';
                 const correctMoviesIdsWith2Matches = [1, 5, 6];
-                const correctMoviesIdsWith1Match = [2,4];
+                const correctMoviesIdsWith1Match = [2, 4];
 
                 const res = await request.get(`${generalRoute}${genresParam}`);
                 const movies: MovieDto[] = res.body.movies;
@@ -192,13 +193,17 @@ describe('Tests for the GET /api/movie endpoints', () => {
                 const resMoviesThatShouldHave2Matches = movies.splice(0, 3);
                 const resMoviesThatShouldHave1Match = movies;
 
-                resMoviesThatShouldHave2Matches.forEach(m => expect(correctMoviesIdsWith2Matches.includes(m.id)));
-                resMoviesThatShouldHave1Match.forEach(m => expect(correctMoviesIdsWith1Match.includes(m.id)));
-            })
+                resMoviesThatShouldHave2Matches.forEach((m) =>
+                    expect(correctMoviesIdsWith2Matches.includes(m.id))
+                );
+                resMoviesThatShouldHave1Match.forEach((m) =>
+                    expect(correctMoviesIdsWith1Match.includes(m.id))
+                );
+            });
         });
 
         describe(`Errors expected`, () => {});
-    })
+    });
 });
 
 describe('Correct results/no errors expected.', () => {});
