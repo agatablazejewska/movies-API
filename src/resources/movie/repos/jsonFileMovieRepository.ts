@@ -46,22 +46,20 @@ export default class JsonFileMovieRepository implements IMovieRepository {
         duration: { from: number; to: number }
     ): Promise<IGetMoviesDto> {
         const filteredByGenres = await this._filterAllMoviesByGenres(genres);
-        const filteredByDuration = await this._filterAllMoviesByDuration(
+        const filteredByGenresAndDuration = await this._findBetweenDuration(filteredByGenres,
             duration.from,
             duration.to
         );
-        const allFiltered = filteredByGenres.concat(filteredByDuration);
 
-        const uniqueSorted = this._removeDuplicatesAndSortByGenresMatch(allFiltered, genres);
+        const uniqueSorted = this._sortByGenresMatch(filteredByGenresAndDuration, genres);
 
         return MovieMapper.toGetMoviesDto(uniqueSorted);
     }
 
-    private _removeDuplicatesAndSortByGenresMatch(allFiltered: IMovieWithId[], genres: GENRES[]) {
-        const unique = this._removeDuplicatesFromArrayById(allFiltered);
-        unique.sort(this._compareByMatchingGenresNumber(genres));
+    private _sortByGenresMatch(allFiltered: IMovieWithId[], genres: GENRES[]) {
+        allFiltered.sort(this._compareByMatchingGenresNumber(genres));
 
-        return unique;
+        return allFiltered;
     }
 
     /*

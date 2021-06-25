@@ -243,6 +243,30 @@ describe('Tests for the GET /api/movie endpoints', () => {
             });
         });
     });
+
+    describe(`GET /:genres/:durationFrom/:durationTo endpoint.`, () => {
+        describe('Correct results/no errors expected.', () => {
+            test(`Genres and duration were provided with a valid format.
+            Should return right number of movies.`, async () => {
+                const genresParam = 'Crime,Drama';
+                const durationFrom = 50;
+                const durationTo = 135;
+                const correctMoviesIds = [2, 4, 5, 6];
+
+                const res = await request.get(
+                    `${generalRoute}${genresParam}/${durationFrom}/${durationTo}`
+                );
+                const movies: MovieDto[] = res.body.movies;
+
+                expect(movies).toHaveLength(4);
+                movies.forEach((m) =>
+                    expect(correctMoviesIds.includes(m.id)).toBe(true)
+                );
+            });
+        });
+
+        describe(`Errors expected`, () => {});
+    });
 });
 
 describe('Correct results/no errors expected.', () => {});
