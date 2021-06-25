@@ -47,6 +47,30 @@ describe('Tests for the GET /api/movie endpoints', () => {
             })
         });
     });
+
+    describe(`GET /:durationFrom/:durationTo endpoint.`, () => {
+        describe('Correct results/no errors expected.', () => {
+            beforeAll(() => seedDbFile({ genres, movies }));
+
+            test('Duration from and to are valid, positive numbers. From is smaller than To. Should return movies with runtime between.', async () => {
+                const durationFrom = 100;
+                const durationTo = 120;
+                const idsOfMovies0WithDurationBetween = [2, 4, 5];
+
+                const res = await request.get(`/api/movie/${durationFrom}/${durationTo}`);
+                const movies = res.body.movies;
+
+                expect(res.status).toBe(200);
+                expect(movies).toHaveLength(3);
+                movies.forEach(m => {
+                    const isInCorrectIds = idsOfMovies0WithDurationBetween.includes(m.id);
+                    expect(isInCorrectIds).toBe(true);
+                });
+            })
+        });
+
+        describe(`Errors expected`, () => {});
+    })
 });
 
 describe('Correct results/no errors expected.', () => {});
