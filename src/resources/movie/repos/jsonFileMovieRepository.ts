@@ -11,6 +11,10 @@ import { DB_FILE } from '../../../config';
 export default class JsonFileMovieRepository implements IMovieRepository {
     async create(movie: IMovieWithId): Promise<IMovieDtoWithId> {
         const db: IDbSchema = await readJson(DB_FILE);
+        if(!db.movies) {
+            db.movies = [];
+        }
+
         db.movies.push(movie);
 
         await writeJson(DB_FILE, db, { spaces: 2 });
