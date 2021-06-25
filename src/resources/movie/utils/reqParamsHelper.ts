@@ -8,15 +8,15 @@ export const convertGenresParamToArr = (req: Request): GENRES[] => {
 };
 
 export const getDurationParams = (req): { from: number; to: number } => {
-    try {
-        const from = parseInt(req.params.durationFrom);
-        const to = parseInt(req.params.durationTo);
+    const from = parseInt(req.params.durationFrom);
+    const to = parseInt(req.params.durationTo);
 
-        return { from, to };
-    } catch {
+    if(isNaN(from) || isNaN(to)) {
         throw new BadRequestError(
             400,
             'Duration must be an integer number',
         )
     }
+
+    return { from, to };
 }
