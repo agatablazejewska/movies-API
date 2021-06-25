@@ -200,9 +200,48 @@ describe('Tests for the GET /api/movie endpoints', () => {
                     expect(correctMoviesIdsWith1Match.includes(m.id))
                 );
             });
+
+            test(`There are no movies with matching genres in the db. Should return an empty array and status 200. `, async () => {
+                const genresParam = 'War';
+                const emptyArray = [];
+
+                const res = await request.get(`${generalRoute}${genresParam}`);
+                const movies: MovieDto[] = res.body.movies;
+
+                expect(movies).toHaveLength(0);
+                expect(movies).toEqual(emptyArray);
+            });
         });
 
-        describe(`Errors expected`, () => {});
+        describe(`Errors expected`, () => {
+            beforeEach(() => seedDbFile({ genres, movies }));
+
+            test(`Genres parameter provided will contain some genres that are not in GENRES enum. 
+            Should return json object with a proper error message.`, async () => {
+                const genresParam = 'Crime,Dramat';
+                const errorObj = {
+                    error: 'At least some of provided genres are invalid',
+                };
+
+                const res = await request.get(`${generalRoute}${genresParam}`);
+
+                expect(res.status).toBe(400);
+                expect(res.body).toEqual(errorObj);
+            });
+
+            test(`Genres parameter provided will contain some genres that are not in GENRES enum. 
+            Should return json object with a proper error message.`, async () => {
+                const genresParam = 'Crime,Dramat';
+                const errorObj = {
+                    error: 'At least some of provided genres are invalid',
+                };
+
+                const res = await request.get(`${generalRoute}${genresParam}`);
+
+                expect(res.status).toBe(400);
+                expect(res.body).toEqual(errorObj);
+            });
+        });
     });
 });
 
