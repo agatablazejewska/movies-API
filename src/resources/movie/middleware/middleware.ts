@@ -23,24 +23,34 @@ export const createMovieValidate = async (req: Request, res: Response, next: Nex
 }
 
 export const durationValidate = (req: Request, res: Response, next: NextFunction) => {
-    const { from, to } = getDurationParams(req);
+    const { from, to } = getDurationParams(req, next);
 
-    validateIndividualDurationNumber(from, res, next);
-    validateIndividualDurationNumber(to, res, next);
+    _validateIndividualDurationNumber(from, res, next);
+    _validateIndividualDurationNumber(to, res, next);
 
-    if(from < to) {
-        const error = new BadRequestError(
-            400,
-            'Duration FROM number can not be greater than duration TO number',
-        )
-
-        next(error);
-    }
+    _validateIsFromBiggerThanTo(from, to, next);
 
     next();
 }
 
-const validateIndividualDurationNumber = (duration: number, res: Response, next: NextFunction) => {
+export const genresValidate = (req: Request, res: Response, next: NextFunction) => {
+    const genres = convertGenresParamToArr(req);
+
+    genres.forEach(genre => {
+        if(!isEnum(genre, GENRES)) {
+            const error =  new BadRequestError(
+                400,
+                'At least some of provided genres are invalid',
+            )
+
+            next(error);
+        }
+    })
+
+    next();
+}
+
+const _validateIndividualDurationNumber = (duration: number, res: Response, next: NextFunction) => {
     const minDuration = 1;
     const maxDuration = 1000;
 
@@ -81,19 +91,13 @@ const validateIndividualDurationNumber = (duration: number, res: Response, next:
     }
 }
 
-export const genresValidate = (req: Request, res: Response, next: NextFunction) => {
-    const genres = convertGenresParamToArr(req);
+const _validateIsFromBiggerThanTo = (from: number, to: number, next: NextFunction) => {
+    if (from > to) {
+        const error = new BadRequestError(
+            400,
+            'Duration FROM number can not be greater than duration TO number',
+        );
 
-    genres.forEach(genre => {
-        if(!isEnum(genre, GENRES)) {
-            const error =  new BadRequestError(
-                400,
-                'At least some of provided genres are invalid',
-            )
-
-            next(error);
-        }
-    })
-
-    next();
+        next(error);
+    }
 }
