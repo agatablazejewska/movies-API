@@ -23,14 +23,19 @@ export const createMovieValidate = async (req: Request, res: Response, next: Nex
 }
 
 export const durationValidate = (req: Request, res: Response, next: NextFunction) => {
-    const { from, to } = getDurationParams(req, next);
+    try {
+        const { from, to } = getDurationParams(req);
 
-    _validateIndividualDurationNumber(from, res, next);
-    _validateIndividualDurationNumber(to, res, next);
+        _validateIndividualDurationNumber(from);
+        _validateIndividualDurationNumber(to);
 
-    _validateIsFromBiggerThanTo(from, to, next);
+        _validateIsFromBiggerThanTo(from, to);
 
-    next();
+        next();
+    } catch(e) {
+        next(e);
+    }
+
 }
 
 export const genresValidate = (req: Request, res: Response, next: NextFunction) => {
@@ -50,54 +55,44 @@ export const genresValidate = (req: Request, res: Response, next: NextFunction) 
     next();
 }
 
-const _validateIndividualDurationNumber = (duration: number, res: Response, next: NextFunction) => {
+const _validateIndividualDurationNumber = (duration: number) => {
     const minDuration = 1;
     const maxDuration = 1000;
 
     if(!isInt(duration)) {
-        const error =  new BadRequestError(
+        throw new BadRequestError(
             400,
             'Duration must be an integer number',
         )
-
-        next(error);
     }
 
     if(!isPositive(duration)) {
-        const error =  new BadRequestError(
+        throw new BadRequestError(
             400,
             'Duration must be a positive number',
         )
-
-        next(error);
     }
 
     if(!max(duration, 1000)) {
-        const error =  new BadRequestError(
+        throw new BadRequestError(
             400,
             `Duration must be smaller than ${maxDuration}`,
         )
-
-        next(error);
     }
 
     if(!min(duration, minDuration)) {
-        const error =  new BadRequestError(
+        throw new BadRequestError(
             400,
             `Duration must be equal or bigger than ${minDuration}`,
         )
-
-        next(error);
     }
 }
 
-const _validateIsFromBiggerThanTo = (from: number, to: number, next: NextFunction) => {
+const _validateIsFromBiggerThanTo = (from: number, to: number) => {
     if (from > to) {
-        const error = new BadRequestError(
+        throw new BadRequestError(
             400,
             'Duration FROM number can not be greater than duration TO number',
         );
-
-        next(error);
     }
 }

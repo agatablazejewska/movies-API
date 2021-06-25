@@ -7,18 +7,16 @@ export const convertGenresParamToArr = (req: Request): GENRES[] => {
     return genres as GENRES[];
 };
 
-export const getDurationParams = (req, next): { from: number; to: number } => {
+export const getDurationParams = (req): { from: number; to: number } => {
     try {
         const from = parseInt(req.params.durationFrom);
         const to = parseInt(req.params.durationTo);
 
         return { from, to };
     } catch {
-        const error =  new BadRequestError(
+        throw new BadRequestError(
             400,
             'Duration must be an integer number',
         )
-
-        next(error);
     }
 }
