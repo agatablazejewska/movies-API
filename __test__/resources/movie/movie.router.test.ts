@@ -3,10 +3,12 @@ import { writeJsonSync } from 'fs-extra';
 import app from '../../../src/app';
 import IDbSchema from '../../../src/database/IDbSchema';
 import { IGetMoviesDto } from '../../../src/resources/movie/dtos/getMovies.dto';
+import MovieDto from '../../../src/resources/movie/dtos/movie.dto';
 import { DB_FILE } from '../../config.test';
 import { genres, movies } from '../../data';
 
 const request = supertest(app);
+const generalRoute = '/api/movie/';
 
 const seedDbFile = (data: IDbSchema) => {
     writeJsonSync(DB_FILE, data, { spaces: 2 });
@@ -15,10 +17,10 @@ const seedDbFile = (data: IDbSchema) => {
 describe('Tests for the GET /api/movie endpoints', () => {
     describe('GET / endpoint.', () => {
         describe('Correct results/no errors expected.', () => {
-            beforeAll(() => seedDbFile({ genres, movies }));
+            beforeEach(() => seedDbFile({ genres, movies }));
 
             test(`Should return one movie.`, async () => {
-                const res = await request.get('/api/movie/');
+                const res = await request.get(`${generalRoute}`);
                 const moviesDto: IGetMoviesDto = res.body;
                 const randomMovie = moviesDto.movies[0];
 
@@ -35,7 +37,7 @@ describe('Tests for the GET /api/movie endpoints', () => {
         describe(`Errors expected`, () => {
             test(`There are no movies in the db. Should return a json error with proper message.`, async () => {
                 seedDbFile({ genres: [], movies: [] });
-                const res = await request.get('/api/movie/');
+                const res = await request.get(`${generalRoute}`);
                 const errorObj = {
                     error: 'There are no movies in the database',
                 };
@@ -48,7 +50,7 @@ describe('Tests for the GET /api/movie endpoints', () => {
 
     describe(`GET /:durationFrom/:durationTo endpoint.`, () => {
         describe('Correct results/no errors expected.', () => {
-            beforeAll(() => seedDbFile({ genres, movies }));
+            beforeEach(() => seedDbFile({ genres, movies }));
 
             test('Duration from and to are valid, positive numbers. From is smaller than To. Should return movies with runtime between.', async () => {
                 const durationFrom = 100;
@@ -56,7 +58,7 @@ describe('Tests for the GET /api/movie endpoints', () => {
                 const idsOfMovies0WithDurationBetween = [2, 4, 5];
 
                 const res = await request.get(
-                    `/api/movie/${durationFrom}/${durationTo}`
+                    `${generalRoute}${durationFrom}/${durationTo}`
                 );
                 const movies = res.body.movies;
 
@@ -80,7 +82,7 @@ describe('Tests for the GET /api/movie endpoints', () => {
                 };
 
                 const res = await request.get(
-                    `/api/movie/${durationFrom}/${durationTo}`
+                    `${generalRoute}${durationFrom}/${durationTo}`
                 );
 
                 expect(res.status).toBe(400);
@@ -95,10 +97,10 @@ describe('Tests for the GET /api/movie endpoints', () => {
                 };
 
                 const resFromInvalid = await request.get(
-                    `/api/movie/${durationInvalid}/${durationValid}`
+                    `${generalRoute}${durationInvalid}/${durationValid}`
                 );
                 const resToInvalid = await request.get(
-                    `/api/movie/${durationValid}/${durationInvalid}`
+                    `${generalRoute}${durationValid}/${durationInvalid}`
                 );
 
                 const results = [resFromInvalid, resToInvalid];
@@ -116,10 +118,10 @@ describe('Tests for the GET /api/movie endpoints', () => {
                 };
 
                 const resFromNegative = await request.get(
-                    `/api/movie/${durationNegative}/${durationPositive}`
+                    `${generalRoute}${durationNegative}/${durationPositive}`
                 );
                 const resToNegative = await request.get(
-                    `/api/movie/${durationPositive}/${durationNegative}`
+                    `${generalRoute}${durationPositive}/${durationNegative}`
                 );
 
                 const results = [resFromNegative, resToNegative];
@@ -136,7 +138,7 @@ describe('Tests for the GET /api/movie endpoints', () => {
                 };
 
                 const resTooBig = await request.get(
-                    `/api/movie/${durationBiggerThanMax}/${durationBiggerThanMax}`
+                    `${generalRoute}${durationBiggerThanMax}/${durationBiggerThanMax}`
                 );
 
                 expect(resTooBig.status).toBe(400);
@@ -152,7 +154,7 @@ describe('Tests for the GET /api/movie endpoints', () => {
 
                 seedDbFile({ genres: [], movies: [] });
                 const res = await request.get(
-                    `/api/movie/${durationFrom}/${durationTo}`
+                    `${generalRoute}${durationFrom}/${durationTo}`
                 );
 
                 expect(res.status).toBe(500);
@@ -160,6 +162,43 @@ describe('Tests for the GET /api/movie endpoints', () => {
             });
         });
     });
+
+    describe('GET /:genres endpoint.', () => {
+        describe('Correct results/no errors expected.', () => {
+            beforeEach(() => seedDbFile({ genres, movies }));
+
+            test(`Genres were provided with a valid format and their value can be found in GENRES enum.
+            Should return right number of movies.`, async () => {
+                const genresParam = 'Crime,Drama';
+                const correctMoviesIds = [1, 2, 4, 5, 6];
+
+                const res = await request.get(`${generalRoute}${genresParam}`);
+                const movies: MovieDto[] = res.body.movies;
+
+
+                expect(movies).toHaveLength(5);
+                movies.forEach(m => expect(correctMoviesIds.includes(m.id)).toBe(true));
+            })
+
+            test(`Genres were provided with a valid format and their value can be found in GENRES enum.
+            Should return movies sorted by the highest match amount.`, async () => {
+                const genresParam = 'Crime,Drama';
+                const correctMoviesIdsWith2Matches = [1, 5, 6];
+                const correctMoviesIdsWith1Match = [2,4];
+
+                const res = await request.get(`${generalRoute}${genresParam}`);
+                const movies: MovieDto[] = res.body.movies;
+
+                const resMoviesThatShouldHave2Matches = movies.splice(0, 3);
+                const resMoviesThatShouldHave1Match = movies;
+
+                resMoviesThatShouldHave2Matches.forEach(m => expect(correctMoviesIdsWith2Matches.includes(m.id)));
+                resMoviesThatShouldHave1Match.forEach(m => expect(correctMoviesIdsWith1Match.includes(m.id)));
+            })
+        });
+
+        describe(`Errors expected`, () => {});
+    })
 });
 
 describe('Correct results/no errors expected.', () => {});
