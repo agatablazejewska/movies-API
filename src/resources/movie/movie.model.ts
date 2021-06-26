@@ -6,6 +6,7 @@ import {
 import { GENRES } from '../../shared/enums/genres';
 import IHasId from '../../utils/IHasId';
 import { IMovieDto } from './dtos/IMovieDto';
+import { IsNotBlank } from './validation/isNotBlank';
 
 export interface IMovie {
     title: string;
@@ -27,6 +28,7 @@ export default class MovieModel implements IMovieWithId {
     @IsDefined()
     @IsString()
     @IsNotEmpty()
+    @IsNotBlank()
     @MaxLength(255, {
         message: 'Title is too long. Maximal length is $constraint1 characters, but actual is $value',
     })
@@ -49,6 +51,7 @@ export default class MovieModel implements IMovieWithId {
 
     @IsString()
     @IsNotEmpty()
+    @IsNotBlank()
     @MaxLength(255, {
         message: `Director's name is too long. Maximal length is $constraint1 characters, but actual is $value`,
     })
@@ -63,16 +66,19 @@ export default class MovieModel implements IMovieWithId {
     @IsString({
         message: `Actors have to be represented a s string`,
     })
+    @IsNotBlank()
     @IsNotEmpty()
     actors?: string;
 
     @IsOptional()
     @IsString()
     @IsNotEmpty()
+    @IsNotBlank()
     plot?: string;
 
     @IsOptional()
     @IsNotEmpty()
+    @IsNotBlank()
     @IsUrl()
     posterUrl?: string;
 

@@ -1,3 +1,4 @@
+import { isString } from 'util';
 import CreateMovieDto, { ICreateMovieDto } from '../dtos/createMovie.dto';
 import GetMoviesDto, { IGetMoviesDto } from '../dtos/getMovies.dto';
 import { IMovieDto, IMovieDtoWithId } from '../dtos/IMovieDto';
@@ -32,9 +33,10 @@ export default class MovieMapper {
         newId: number
     ): IMovieWithId {
         const model = this._stringifyPropsToMatchModelSchema(createMovieDto);
+        this._trimAllStringProperties(model);
         const newModel = new MovieModel({ id: newId, ...model });
 
-        return newModel
+        return newModel;
     }
 
     private static _parsePropsToMatchDtoSchema(model: IMovieWithId) {
@@ -44,10 +46,20 @@ export default class MovieMapper {
         return dto;
     }
 
-    private static _stringifyPropsToMatchModelSchema<T extends IMovieDto | IMovieDtoWithId>(movieDto: T) {
+    private static _stringifyPropsToMatchModelSchema<
+        T extends IMovieDto | IMovieDtoWithId
+    >(movieDto: T) {
         const runtime = movieDto.runtime.toString();
         const year = movieDto.year.toString();
         const dto = { ...movieDto, runtime, year };
         return dto;
+    }
+
+    private static _trimAllStringProperties(movie: IMovieDto) {
+        Object.values(movie).map((value) => {
+            if (typeof value === 'string') {
+                return value.trim();
+            }
+        });
     }
 }
