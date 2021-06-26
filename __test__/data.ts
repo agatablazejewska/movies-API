@@ -114,3 +114,16 @@ export const movies: MovieModel[] = [
         posterUrl: "https://images-na.ssl-images-amazon.com/images/M/MV5BMjA4ODQ3ODkzNV5BMl5BanBnXkFtZTYwOTc4NDI3._V1_SX300.jpg"
     }
 ]
+
+export const newMovie = {
+    title: "Gran Torino",
+    year: 2008,
+    runtime: 116,
+    genres: [
+        GENRES.DRAMA
+    ],
+    director: "Clint Eastwood",
+    actors: "Clint Eastwood, Christopher Carley, Bee Vang, Ahney Her",
+    plot: "Disgruntled Korean War veteran Walt Kowalski sets out to reform his neighbor, a Hmong teenager who tried to steal Kowalski's prized possession: a 1972 Gran Torino.",
+    posterUrl: "http://ia.media-imdb.com/images/M/MV5BMTQyMTczMTAxMl5BMl5BanBnXkFtZTcwOTc1ODE0Mg@@._V1_SX300.jpg"
+}
