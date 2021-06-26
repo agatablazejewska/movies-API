@@ -43,7 +43,7 @@ export default class CreateMovieDto implements ICreateMovieDto {
 
     @IsOptional()
     @IsString({
-        message: `Actors have to be represented a s string`,
+        message: `Actors have to be represented as string`,
     })
     @IsNotBlank()
     @IsNotEmpty()
