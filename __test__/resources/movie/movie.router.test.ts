@@ -466,24 +466,114 @@ describe(`Tests for the POST /api/movie endpoints.`, () => {
             const spaces = '    ';
             const positiveNumber = 10;
             const negativeNumber = -5;
+            const numberTooBig = 5000;
+            const yearTooSmall = 1500;
             const longerThan255Characters =
                 'At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.';
-            const genreNotEnum = 'NotEnum';
+            const genreNotEnum = 'Crimet';
             const isNotUrl = 'http:ksjasaldja.sdj';
 
             test('Title is not valid. Should return json object with an error message.', async () => {
-                const invalidTitlesArray = [emptyString, spaces, positiveNumber, longerThan255Characters, undefined];
-                for(const invalidTitle of invalidTitlesArray) {
-                    const invalidNewMovie = {...newMovie, title: invalidTitle};
-                    const res = await request.post(generalRoute).send(invalidNewMovie);
+                const invalidTitlesArray = [
+                    emptyString,
+                    spaces,
+                    positiveNumber,
+                    longerThan255Characters,
+                    undefined,
+                ];
+                await _expectErrorForWrongPropValues(invalidTitlesArray, 'title');
+            });
 
-                    expect(res.status).toBe(400);
-                    expect(res.body).toHaveProperty('error');
-                }
+            test('Year is not valid. Should return json object with an error message.', async () => {
+                const invalidYearsArray = [
+                    emptyString,
+                    positiveNumber,
+                    negativeNumber,
+                    undefined,
+                    numberTooBig,
+                    yearTooSmall,
+                ];
+                await _expectErrorForWrongPropValues(invalidYearsArray, 'year');
+            });
+
+            test('Runtime is not valid. Should return json object with an error message.', async () => {
+                const invalidRuntimesArray = [
+                    emptyString,
+                    negativeNumber,
+                    undefined,
+                    numberTooBig,
+                    0,
+                ];
+                await _expectErrorForWrongPropValues(invalidRuntimesArray, 'runtime');
+            });
+
+            test('Director is not valid. Should return json object with an error message.', async () => {
+                const invalidDirectorsArray = [
+                    emptyString,
+                    spaces,
+                    positiveNumber,
+                    longerThan255Characters,
+                    undefined,
+                ];
+                await _expectErrorForWrongPropValues(invalidDirectorsArray, 'director');
+            });
+
+            test('Genres are not valid. Should return json object with an error message.', async () => {
+                const invalidGenresArray = [
+                    emptyString,
+                    spaces,
+                    positiveNumber,
+                    undefined,
+                    genreNotEnum,
+                ];
+                await _expectErrorForWrongPropValues(invalidGenresArray, 'genres');
+            });
+
+            test('Actors are not valid. Should return json object with an error message.', async () => {
+                const invalidGenresArray = [
+                    emptyString,
+                    spaces,
+                    positiveNumber
+                ];
+                await _expectErrorForWrongPropValues(invalidGenresArray, 'actors');
+            });
+
+            test('Plot is not valid. Should return json object with an error message.', async () => {
+                const invalidGenresArray = [
+                    emptyString,
+                    spaces,
+                    positiveNumber
+                ];
+                await _expectErrorForWrongPropValues(invalidGenresArray, 'plot');
+            });
+
+            test('PosterUrl is not valid. Should return json object with an error message.', async () => {
+                const invalidGenresArray = [
+                    emptyString,
+                    spaces,
+                    positiveNumber,
+                    isNotUrl
+                ];
+                await _expectErrorForWrongPropValues(invalidGenresArray, 'posterUrl');
             });
         });
     });
 });
+
+
+async function _expectErrorForWrongPropValues(invalidPropValuesArray: any[], propName: string) {
+    for (const invalidValue of invalidPropValuesArray) {
+        const invalidNewMovie = Object.assign({}, newMovie);
+        invalidNewMovie[propName] = invalidValue;
+
+        const res = await request
+            .post(generalRoute)
+            .send(invalidNewMovie);
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty('error');
+    }
+}
 
 describe('Correct results/no errors expected.', () => {});
 
