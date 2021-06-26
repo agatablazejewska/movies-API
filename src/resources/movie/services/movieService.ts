@@ -16,7 +16,7 @@ export default class MovieService {
     }
 
     async create(movie: ICreateMovieDto): Promise<MovieDto> {
-        const newId = this._findNextAvailableId();
+        const newId = await this._findNextAvailableId();
         const newMovie = MovieMapper.toMovieModelFromCreateMovieDto(movie, newId);
 
         return await this._repository.create(newMovie);
@@ -42,8 +42,12 @@ export default class MovieService {
         return await this._repository.getMoviesByGenresAndDuration(genres, duration);
     }
 
-    private _findNextAvailableId() {
-        const lastId = this._lastIdSingleton.lastId;
+    private async _findNextAvailableId() {
+        let lastId = this._lastIdSingleton.lastId;
+        if(lastId === undefined || lastId === null) {
+            await this._lastIdSingleton.initializeLastId();
+            lastId = this._lastIdSingleton.lastId;
+        }
 
         this._lastIdSingleton.increaseLastId();
 
