@@ -449,9 +449,39 @@ describe(`Tests for the POST /api/movie endpoints.`, () => {
                 expect(resultMovie.id).toBe(nextExpectedId);
                 expect(resultMovie).toEqual(expect.objectContaining(newMovie));
             });
+
+            test(`Db is empty. Should add a new movie to the db with a correct ID.`, async () => {
+                seedDbFile({ movies: [], genres: [] });
+                const nextExpectedId = 1;
+                const res = await request.post(generalRoute).send(newMovie);
+                const resultMovie = res.body;
+
+                expect(resultMovie.id).toBe(nextExpectedId);
+                expect(resultMovie).toEqual(expect.objectContaining(newMovie));
+            });
         });
 
-        describe(`Errors expected`, () => {});
+        describe(`Errors expected`, () => {
+            const emptyString = '';
+            const spaces = '    ';
+            const positiveNumber = 10;
+            const negativeNumber = -5;
+            const longerThan255Characters =
+                'At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.';
+            const genreNotEnum = 'NotEnum';
+            const isNotUrl = 'http:ksjasaldja.sdj';
+
+            test('Title is not valid. Should return json object with an error message.', async () => {
+                const invalidTitlesArray = [emptyString, spaces, positiveNumber, longerThan255Characters, undefined];
+                for(const invalidTitle of invalidTitlesArray) {
+                    const invalidNewMovie = {...newMovie, title: invalidTitle};
+                    const res = await request.post(generalRoute).send(invalidNewMovie);
+
+                    expect(res.status).toBe(400);
+                    expect(res.body).toHaveProperty('error');
+                }
+            });
+        });
     });
 });
 
