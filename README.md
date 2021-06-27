@@ -8,7 +8,10 @@ It is single user only, meaning no authentication, authorization or account crea
 
 -   create and add a new movie to a database;
 -   get random movie;
--   get movies by genres/duration time/genres and duration time;
+-   get movies by genres/duration time/genres and duration time
+
+# Live
+You can check how the app works here: https://simple-movies-api.herokuapp.com/
 
 # Dependencies
 
