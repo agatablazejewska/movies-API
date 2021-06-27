@@ -30,7 +30,8 @@ If you'd like to download the code and launch it yourself, here's what you need 
     PORT=
 
 The database file path should be specified relatively to the _/src_ folder
-Example:
+
+**Example** (you can actually copy and paste it):
 
     DB_FILE_PATH=./database/db.json
     PORT=3000
