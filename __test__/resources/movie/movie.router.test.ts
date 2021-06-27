@@ -574,7 +574,3 @@ async function _expectErrorForWrongPropValues(invalidPropValuesArray: any[], pro
         expect(res.body).toHaveProperty('error');
     }
 }
-
-describe('Correct results/no errors expected.', () => {});
-
-describe(`Errors expected`, () => {});
