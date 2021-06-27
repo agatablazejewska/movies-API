@@ -6,11 +6,7 @@
     "esModuleInterop": true,
     "target": "ES6",
     "moduleResolution": "node",
-    "outDir": "build",
-    "types": [
-      "node",
-      "jest"
-    ]
+    "outDir": "build"
   },
   "exclude" : [
     "node_modules",

@@ -4,7 +4,7 @@ import app from '../../../src/app';
 import IDbSchema from '../../../src/database/IDbSchema';
 import { IGetMoviesDto } from '../../../src/resources/movie/dtos/getMovies.dto';
 import MovieDto from '../../../src/resources/movie/dtos/movie.dto';
-import { DB_FILE } from '../../config.test';
+import { DB_FILE } from '../../config';
 import { genres, movies, newMovie } from '../../data';
 
 const request = supertest(app);
@@ -14,11 +14,11 @@ const seedDbFile = (data: IDbSchema) => {
     writeJsonSync(DB_FILE, data, { spaces: 2 });
 };
 
+beforeEach(() => seedDbFile({ genres, movies }));
+
 describe('Tests for the GET /api/movie endpoints', () => {
     describe('GET / endpoint.', () => {
         describe('Correct results/no errors expected.', () => {
-            beforeEach(() => seedDbFile({ genres, movies }));
-
             test(`Should return one movie.`, async () => {
                 const res = await request.get(`${generalRoute}`);
                 const moviesDto: IGetMoviesDto = res.body;
@@ -36,7 +36,7 @@ describe('Tests for the GET /api/movie endpoints', () => {
 
         describe(`Errors expected`, () => {
             test(`There are no movies in the db. Should return a json error with proper message.`, async () => {
-                seedDbFile({ genres: [], movies: [] });
+                seedDbFile({ genres, movies: [] });
                 const res = await request.get(`${generalRoute}`);
                 const errorObj = {
                     error: 'There are no movies in the database',
@@ -50,8 +50,6 @@ describe('Tests for the GET /api/movie endpoints', () => {
 
     describe(`GET /:durationFrom/:durationTo endpoint.`, () => {
         describe('Correct results/no errors expected.', () => {
-            beforeEach(() => seedDbFile({ genres, movies }));
-
             test('Duration from and to are valid, positive numbers. From is smaller than To. Should return movies with runtime between.', async () => {
                 const durationFrom = 100;
                 const durationTo = 120;
@@ -152,7 +150,7 @@ describe('Tests for the GET /api/movie endpoints', () => {
                     error: 'There are no movies in the database',
                 };
 
-                seedDbFile({ genres: [], movies: [] });
+                seedDbFile({ genres, movies: [] });
                 const res = await request.get(
                     `${generalRoute}${durationFrom}/${durationTo}`
                 );
@@ -165,8 +163,6 @@ describe('Tests for the GET /api/movie endpoints', () => {
 
     describe('GET /:genres endpoint.', () => {
         describe('Correct results/no errors expected.', () => {
-            beforeEach(() => seedDbFile({ genres, movies }));
-
             test(`Genres were provided with a valid format and their value can be found in GENRES enum.
             Should return right number of movies.`, async () => {
                 const genresParam = 'Crime,Drama';
@@ -214,8 +210,6 @@ describe('Tests for the GET /api/movie endpoints', () => {
         });
 
         describe(`Errors expected`, () => {
-            beforeEach(() => seedDbFile({ genres, movies }));
-
             test(`Genres parameter provided will contain some genres that are not in GENRES enum. 
             Should return json object with a proper error message.`, async () => {
                 const genresParam = 'Crime,Dramat';
@@ -305,8 +299,6 @@ describe('Tests for the GET /api/movie endpoints', () => {
         });
 
         describe(`Errors expected`, () => {
-            beforeEach(() => seedDbFile({ genres, movies }));
-
             test(`Genres parameter provided will contain some genres that are not in GENRES enum. 
             Should return json object with a proper error message.`, async () => {
                 const genresParam = 'Crime,Dramat';
@@ -424,7 +416,7 @@ describe('Tests for the GET /api/movie endpoints', () => {
                     error: 'There are no movies in the database',
                 };
 
-                seedDbFile({ genres: [], movies: [] });
+                seedDbFile({ genres, movies: [] });
                 const res = await request.get(
                     `${generalRoute}${genresParam}/${durationFrom}/${durationTo}`
                 );
@@ -439,8 +431,6 @@ describe('Tests for the GET /api/movie endpoints', () => {
 describe(`Tests for the POST /api/movie endpoints.`, () => {
     describe(`Tests fot the POST / endpoint.`, () => {
         describe('Correct results/no errors expected.', () => {
-            beforeEach(() => seedDbFile({ genres, movies }));
-
             test(`Should add a new movie to the db with a correct ID.`, async () => {
                 const nextExpectedId = 7;
                 const res = await request.post(`${generalRoute}`).send(newMovie);
@@ -451,7 +441,7 @@ describe(`Tests for the POST /api/movie endpoints.`, () => {
             });
 
             test(`Db is empty. Should add a new movie to the db with a correct ID.`, async () => {
-                seedDbFile({ movies: [], genres: [] });
+                seedDbFile({ genres, movies: [] });
                 const nextExpectedId = 1;
                 const res = await request.post(generalRoute).send(newMovie);
                 const resultMovie = res.body;
