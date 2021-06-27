@@ -11,6 +11,10 @@ import { DB_FILE } from '../../../config';
 export default class JsonFileMovieRepository implements IMovieRepository {
     async create(movie: IMovieWithId): Promise<IMovieDtoWithId> {
         const db: IDbSchema = await readJson(DB_FILE);
+        if(!db.movies) {
+            db.movies = [];
+        }
+
         db.movies.push(movie);
 
         await writeJson(DB_FILE, db, { spaces: 2 });
@@ -42,22 +46,20 @@ export default class JsonFileMovieRepository implements IMovieRepository {
         duration: { from: number; to: number }
     ): Promise<IGetMoviesDto> {
         const filteredByGenres = await this._filterAllMoviesByGenres(genres);
-        const filteredByDuration = await this._filterAllMoviesByDuration(
+        const filteredByGenresAndDuration = await this._findBetweenDuration(filteredByGenres,
             duration.from,
             duration.to
         );
-        const allFiltered = filteredByGenres.concat(filteredByDuration);
 
-        const uniqueSorted = this._removeDuplicatesAndSortByGenresMatch(allFiltered, genres);
+        const uniqueSorted = this._sortByGenresMatch(filteredByGenresAndDuration, genres);
 
         return MovieMapper.toGetMoviesDto(uniqueSorted);
     }
 
-    private _removeDuplicatesAndSortByGenresMatch(allFiltered: IMovieWithId[], genres: GENRES[]) {
-        const unique = this._removeDuplicatesFromArrayById(allFiltered);
-        unique.sort(this._compareByMatchingGenresNumber(genres));
+    private _sortByGenresMatch(allFiltered: IMovieWithId[], genres: GENRES[]) {
+        allFiltered.sort(this._compareByMatchingGenresNumber(genres));
 
-        return unique;
+        return allFiltered;
     }
 
     /*
@@ -90,6 +92,10 @@ export default class JsonFileMovieRepository implements IMovieRepository {
     private async _getAllMoviesFromDB(): Promise<IMovieWithId[]> {
         const db: IDbSchema = await readJson(DB_FILE);
         const movies = db.movies;
+
+        if(!movies || !movies.length) {
+            throw new Error('There are no movies in the database');
+        }
         return movies;
     }
 

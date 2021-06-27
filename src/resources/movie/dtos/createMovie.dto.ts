@@ -3,6 +3,7 @@ import {
     IsDefined, IsString, IsNotEmpty, MaxLength, IsNumberString, IsPositive, IsEnum,
     IsOptional, IsUrl, Length, ValidateIf, Matches, IsInt, Min, Max,
 } from 'class-validator';
+import { IsNotBlank } from '../validation/isNotBlank';
 import { GENRES } from '../../../shared/enums/genres';
 import { IMovieDto } from './IMovieDto';
 
@@ -12,6 +13,7 @@ export default class CreateMovieDto implements ICreateMovieDto {
     @IsDefined()
     @IsString()
     @IsNotEmpty()
+    @IsNotBlank()
     @MaxLength(255)
     title: string;
 
@@ -28,6 +30,7 @@ export default class CreateMovieDto implements ICreateMovieDto {
 
     @IsString()
     @IsNotEmpty()
+    @IsNotBlank()
     @MaxLength(255, {
         message: `Director's name is too long. Maximal length is $constraint1 characters, but actual is $value`,
     })
@@ -40,18 +43,21 @@ export default class CreateMovieDto implements ICreateMovieDto {
 
     @IsOptional()
     @IsString({
-        message: `Actors have to be represented a s string`,
+        message: `Actors have to be represented as string`,
     })
+    @IsNotBlank()
     @IsNotEmpty()
     actors?: string;
 
     @IsOptional()
     @IsString()
+    @IsNotBlank()
     @IsNotEmpty()
     plot?: string;
 
     @IsOptional()
     @IsNotEmpty()
+    @IsNotBlank()
     @IsUrl()
     posterUrl?: string;
 

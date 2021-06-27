@@ -13,13 +13,17 @@ class MovieLastIdSingletonForJsonFileRepository extends MovieLastIdSingleton {
     }
 
     private async _getLastMovieId() {
-        const allMoviesDto = await this._movieRepository.getAllMovies();
-        const allMovies = allMoviesDto.movies;
+        try {
+            const allMoviesDto = await this._movieRepository.getAllMovies();
+            const allMovies = allMoviesDto.movies;
 
-        const lastIndex = allMovies.length - 1;
-        const lastItemId = allMovies[lastIndex].id;
+            const lastIndex = allMovies.length - 1;
+            const lastItemId = allMovies[lastIndex].id;
 
-        return lastItemId;
+            return lastItemId;
+        } catch {
+            return 0;
+        }
     }
 }
 

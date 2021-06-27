@@ -23,62 +23,19 @@ export const createMovieValidate = async (req: Request, res: Response, next: Nex
 }
 
 export const durationValidate = (req: Request, res: Response, next: NextFunction) => {
-    const { from, to } = getDurationParams(req);
+    try {
+        const { from, to } = getDurationParams(req);
 
-    if(from < to) {
-        const error = new BadRequestError(
-            400,
-            'Duration FROM number can not be greater than duration TO number',
-        )
+        _validateIndividualDurationNumber(from);
+        _validateIndividualDurationNumber(to);
 
-        next(error);
+        _validateIsFromBiggerThanTo(from, to);
+
+        next();
+    } catch(e) {
+        next(e);
     }
 
-    validateIndividualDurationNumber(from, res, next);
-    validateIndividualDurationNumber(to, res, next);
-
-    next();
-}
-
-const validateIndividualDurationNumber = (duration: number, res: Response, next: NextFunction) => {
-    const minDuration = 1;
-    const maxDuration = 1000;
-
-    if(!isInt(duration)) {
-        const error =  new BadRequestError(
-            400,
-            'Duration must be an integer number',
-        )
-
-        next(error);
-    }
-
-    if(!isPositive(duration)) {
-        const error =  new BadRequestError(
-            400,
-            'Duration must be a positive number',
-        )
-
-        next(error);
-    }
-
-    if(!max(duration, 1000)) {
-        const error =  new BadRequestError(
-            400,
-            `Duration must be smaller than ${maxDuration}`,
-        )
-
-        next(error);
-    }
-
-    if(!min(duration, minDuration)) {
-        const error =  new BadRequestError(
-            400,
-            `Duration must be equal or bigger than ${minDuration}`,
-        )
-
-        next(error);
-    }
 }
 
 export const genresValidate = (req: Request, res: Response, next: NextFunction) => {
@@ -96,4 +53,46 @@ export const genresValidate = (req: Request, res: Response, next: NextFunction) 
     })
 
     next();
+}
+
+const _validateIndividualDurationNumber = (duration: number) => {
+    const minDuration = 1;
+    const maxDuration = 1000;
+
+    if(!isInt(duration)) {
+        throw new BadRequestError(
+            400,
+            'Duration must be an integer number',
+        )
+    }
+
+    if(!isPositive(duration)) {
+        throw new BadRequestError(
+            400,
+            'Duration must be a positive number',
+        )
+    }
+
+    if(!max(duration, 1000)) {
+        throw new BadRequestError(
+            400,
+            `Duration must be smaller than ${maxDuration}`,
+        )
+    }
+
+    if(!min(duration, minDuration)) {
+        throw new BadRequestError(
+            400,
+            `Duration must be equal or bigger than ${minDuration}`,
+        )
+    }
+}
+
+const _validateIsFromBiggerThanTo = (from: number, to: number) => {
+    if (from > to) {
+        throw new BadRequestError(
+            400,
+            'Duration FROM number can not be greater than duration TO number',
+        );
+    }
 }
