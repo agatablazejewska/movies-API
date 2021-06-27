@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
+    "start:prod": "node build/index.js",
+    "start": "tsc && ts-node src/index.ts",
     "test": "jest --verbose --runInBand"
   },
   "repository": {
