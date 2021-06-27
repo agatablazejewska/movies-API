@@ -1,4 +1,5 @@
 # Create movie
+
 Used to create a new movie.
 
 **URL** : `/api/movie/`
@@ -11,30 +12,31 @@ Used to create a new movie.
 
 ```json
 {
-    "title": string,  
-    "year": number,  
-	"runtime": number,  
-	"director": string,  
-	"genres": [],  
-	"actors": string, optional
-	"plot": string,  optional
-	"posterUrl": string, optional
+    "title": string,
+    "year": number,
+    "runtime": number,
+    "director": string,
+    "genres": [],
+    "actors": string, optional,
+    "plot": string,  optional,
+    "posterUrl": string, optional
 }
 ```
+
 Genres has to be one of [GENRES](Genres.md) enum
 
 **Data example**
 
 ```json
-{ 
-  title: "Gran Torino",  
-  year: 2008,  
-  runtime: 116,  
-  genres: [GENRES.DRAMA],  
-  director: "Clint Eastwood",  
-  actors: "Clint Eastwood, Christopher Carley, Bee Vang, Ahney Her",  
-  plot: "Disgruntled Korean War veteran Walt Kowalski sets out to reform his neighbor, a Hmong teenager who tried to steal Kowalski's prized possession: a 1972 Gran Torino.",  
-  posterUrl: "http://ia.media-imdb.com/images/M/MV5BMTQyMTczMTAxMl5BMl5BanBnXkFtZTcwOTc1ODE0Mg@@._V1_SX300.jpg"  
+{
+    title: "Gran Torino",
+    year: 2008,
+    runtime: 116,
+    genres: [GENRES.DRAMA],
+    director: "Clint Eastwood",
+    actors: "Clint Eastwood, Christopher Carley, Bee Vang, Ahney Her",
+    plot: "Disgruntled Korean War veteran Walt Kowalski sets out to reform his neighbor, a Hmong teenager who tried to steal Kowalski's prized possession: a 1972 Gran Torino.",
+    posterUrl: "http://ia.media-imdb.com/images/M/MV5BMTQyMTczMTAxMl5BMl5BanBnXkFtZTcwOTc1ODE0Mg@@._V1_SX300.jpg"
 }
 ```
 
@@ -46,15 +48,15 @@ Genres has to be one of [GENRES](Genres.md) enum
 
 ```json
 {
-  id: 195,
-  title: "Gran Torino",  
-  year: 2008,  
-  runtime: 116,
-  genres: ["Drama", "Thriller"],
-  director: "Clint Eastwood",  
-  actors: "Clint Eastwood, Christopher Carley, Bee Vang, Ahney Her",  
-  plot: "Disgruntled Korean War veteran Walt Kowalski sets out to reform his neighbor, a Hmong teenager who tried to steal Kowalski's prized possession: a 1972 Gran Torino.",  
-  posterUrl: "http://ia.media-imdb.com/images/M/MV5BMTQyMTczMTAxMl5BMl5BanBnXkFtZTcwOTc1ODE0Mg@@._V1_SX300.jpg"  
+    "id": 195,
+    "title": "Gran Torino",
+    "year": 2008,
+    "runtime": 116,
+    "genres": ["Drama", "Thriller"],
+    "director": "Clint Eastwood",
+    "actors": "Clint Eastwood, Christopher Carley, Bee Vang, Ahney Her",
+    "plot": "Disgruntled Korean War veteran Walt Kowalski sets out to reform his neighbor, a Hmong teenager who tried to steal Kowalski's prized possession: a 1972 Gran Torino.",
+    "posterUrl": "http://ia.media-imdb.com/images/M/MV5BMTQyMTczMTAxMl5BMl5BanBnXkFtZTcwOTc1ODE0Mg@@._V1_SX300.jpg"
 }
 ```
 
@@ -67,7 +69,7 @@ Genres has to be one of [GENRES](Genres.md) enum
 **Content** :
 
 ```json
-{  
-  error: "Error message here",  
+{
+    "error": "Error message here"
 }
 ```
