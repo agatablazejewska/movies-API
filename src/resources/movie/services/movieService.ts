@@ -43,11 +43,8 @@ export default class MovieService {
     }
 
     private async _findNextAvailableId() {
+        await this._lastIdSingleton.initializeLastId();
         let lastId = this._lastIdSingleton.lastId;
-        if(lastId === undefined || lastId === null) {
-            await this._lastIdSingleton.initializeLastId();
-            lastId = this._lastIdSingleton.lastId;
-        }
 
         this._lastIdSingleton.increaseLastId();
 
