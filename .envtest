@@ -1,2 +1,2 @@
-DB_FILE_PATH=../__test__/db.test.json
+DB_FILE_PATH=../__test__/db.json
 PORT=3001
